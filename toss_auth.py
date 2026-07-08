@@ -1,24 +1,31 @@
+import os
 import requests
+from dotenv import load_dotenv
 
+load_dotenv()
 
 def get_toss_access_token():
     # 1. API 엔드포인트 URL 설정
-    url = "openapi.tossinvest.com/oauth2/token"
+    url = "https://openapi.tossinvest.com/oauth2/token"
 
     # 2. HTTP 헤더 설정
     headers = {"Content-Type": "application/x-www-form-urlencoded"}
 
+    # 만약 파일에 해당 값이 없다면 에러를 내서 알려주도록 안전장치를 넣었습니다.
+    client_id = os.getenv("TOSS_CLIENT_ID")
+    client_secret = os.getenv("TOSS_CLIENT_SECRET")
+
     # 3. 요청 바디 데이터 (본인의 실제 키 값으로 변경하세요)
     payload = {
         "grant_type": "client_credentials",
-        "client_id": "tsck_live_aUMfHeVefROEbHnQdj7BZj",
-        "client_secret": "tssk_live_FXlfyBhjfJWSYzMElf2ysRi8UM8a6Cm4C3x2mhvJTmcA",
+        "client_id": client_id,
+        "client_secret": client_secret,
     }
 
     try:
         # 4. POST 요청 보내기
         # requests.post에서 data= 인자에 딕셔너리를 넣으면 자동으로 x-www-form-urlencoded 형식으로 인코딩됩니다.
-        response = requests.post(url, headers=headers, data=payload)
+        response = requests.post(url, headers=headers, data=payload, verify=False)
 
         # HTTP 상태 코드가 200(성공)인지 확인
         if response.status_code == 200:
